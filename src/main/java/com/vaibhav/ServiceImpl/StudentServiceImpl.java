@@ -1,5 +1,7 @@
 package com.vaibhav.ServiceImpl;
 
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -7,7 +9,8 @@ import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.vaibhav.dto.StudentDTO;
+import com.vaibhav.dto.StudentRequestDTO;
+import com.vaibhav.dto.StudentResponseDTO;
 import com.vaibhav.entity.Student;
 import com.vaibhav.exception.StudentException;
 import com.vaibhav.repository.StudentRepository;
@@ -21,27 +24,24 @@ public class StudentServiceImpl implements StudentService {
 	
 	
 	@Override
-	public List<StudentDTO> getAllStudents() {
+	public List<StudentResponseDTO> getAllStudents() {
 		Iterable<Student> students= studentRepository.findAll();
-		List<StudentDTO> studentlist= new ArrayList<>();
+		List<StudentResponseDTO> studentlist= new ArrayList<>();
 		for(Student student:students)
 		{
-			StudentDTO studentDTO= new StudentDTO();
-			studentDTO.setRollNo(student.getRollNo());
-			studentDTO.setName(student.getName());
-			studentDTO.setMobile(student.getMobile());
-			studentlist.add(studentDTO);
+			StudentResponseDTO studentResponseDTO= new StudentResponseDTO();
+			studentResponseDTO.setId(student.getId());
+			studentResponseDTO.setMobile(student.getMobile());
+			studentResponseDTO.setName(student.getName());
+			studentlist.add(studentResponseDTO);
 		}
 		return studentlist;
 	}
 
 	@Override
-	public Student addStudent(StudentDTO studentDTO) throws StudentException {
+	public StudentResponseDTO addStudent(StudentRequestDTO studentDTO) throws StudentException {
 		Student student= new Student();
-		if(Objects.nonNull(studentDTO.getRollNo()))
-			student.setRollNo(studentDTO.getRollNo());
-		else
-			throw new StudentException("Student Roll no. is empty");
+		StudentResponseDTO studentResponseDTO =null;
 		
 		if(Objects.nonNull(studentDTO.getName()))
 			student.setName(studentDTO.getName());
@@ -53,7 +53,44 @@ public class StudentServiceImpl implements StudentService {
 		else
 			throw new StudentException("Student Mobile no. is empty");
 		
-		return studentRepository.save(student);
+		student.setId(getId());
+		
+		studentRepository.save(student);
+		studentResponseDTO =new StudentResponseDTO();
+		
+		studentResponseDTO.setId(student.getId());
+		studentResponseDTO.setMobile(student.getMobile());
+		studentResponseDTO.setName(student.getName());
+		return studentResponseDTO;
 	}
+	
+	
+	@Override
+	public StudentResponseDTO getStudent(String id) {
+		
+		StudentResponseDTO studentResponseDTO=null;
+		
+		Student student = studentRepository.findOne(id);
+		
+		if(Objects.nonNull(student)){
+		studentResponseDTO =new StudentResponseDTO();
+		
+		studentResponseDTO.setId(student.getId());
+		studentResponseDTO.setMobile(student.getMobile());
+		studentResponseDTO.setName(student.getName());
+		}
+		
+		return studentResponseDTO;
+		
+	}
+	
+	
+
+/*	
+	Get Unique Id
+	
+	*/
+	private static String getId(){return (new BigInteger(199, new SecureRandom()).toString(36));}
+
 
 }

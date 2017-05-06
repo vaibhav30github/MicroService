@@ -1,20 +1,22 @@
 package com.vaibhav.dto;
 
 
-public class StudentDTO {
+public class StudentResponseDTO {
 
-	private long rollNo;
+	private String id;
 	
 	private String name;
 	
 	private long mobile;
 
-	public long getRollNo() {
-		return rollNo;
+
+
+	public String getId() {
+		return id;
 	}
 
-	public void setRollNo(long rollNo) {
-		this.rollNo = rollNo;
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getName() {
