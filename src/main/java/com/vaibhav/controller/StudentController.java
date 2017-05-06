@@ -21,6 +21,7 @@ import com.vaibhav.exception.StudentException;
 import com.vaibhav.resopnse.ControllerResponse;
 import com.vaibhav.service.StudentService;
 
+import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
 @RestController
@@ -34,6 +35,7 @@ public class StudentController {
  * Add Student
  * 
 */
+	@ApiOperation(value="Add Student")
 	@RequestMapping(value="/addStudentDetails",method = RequestMethod.POST,produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> addStudentDetails(@RequestBody StudentRequestDTO studentDTO) {
 		ControllerResponse response = new ControllerResponse();
@@ -55,8 +57,9 @@ public class StudentController {
 	 * Get all Student
 	 * 
 	*/
+	@ApiOperation(value="Fetch all Students")
 	@RequestMapping(value="/getStudentsDetails",method = RequestMethod.GET,produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> getAllStudentsDetails() {
+	public ResponseEntity<?> getAllStudentsDetails() throws StudentException {
 
 		ControllerResponse response = new ControllerResponse();
 
@@ -73,9 +76,10 @@ public class StudentController {
 	 * Get a Student
 	 * 
 	*/
+	@ApiOperation(value="Fetch a Student")
 	@ApiParam("Get a student")
 	@RequestMapping(value="/getStudent{id}",method = RequestMethod.GET,produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> getStudent(@RequestParam String sstudentId) {
+	public ResponseEntity<?> getStudent(@RequestParam String sstudentId) throws StudentException {
 
 		ControllerResponse response = new ControllerResponse();
 
@@ -87,4 +91,47 @@ public class StudentController {
 		response.setObject(student);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}		
+/*
+* delete Studet
+*/
+	@ApiOperation(value="Delete Student")
+	@RequestMapping(value="/deleteStudent{id}",method = RequestMethod.DELETE,produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> deleteStudent(@RequestParam String sstudentId) throws StudentException {
+
+		ControllerResponse response = new ControllerResponse();
+
+		boolean result = studentService.deleteStudent(sstudentId);
+
+		
+		if(!result) {
+			response.setMessage("There is no student in database");
+		}
+		response.setStatus(HttpStatus.OK);
+		response.setObject("Deleted Sucessfully");
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+	/*
+	 * Update a Student
+	 * 
+	*/
+	@ApiOperation(value="Update Student")
+	@RequestMapping(value="/updateStudent{id}",method = RequestMethod.PUT,produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> updateStudent(@RequestBody StudentRequestDTO studentDTO,
+			@RequestParam String sstudentId) throws StudentException {
+
+		ControllerResponse response = new ControllerResponse();
+
+		StudentResponseDTO studentResponseDTO = studentService.update(studentDTO, sstudentId);
+
+		
+		if(Objects.nonNull(studentResponseDTO)) {
+			response.setMessage("Student Id not match");
+		}
+		response.setStatus(HttpStatus.OK);
+		response.setObject(studentResponseDTO);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+	
+	
 }

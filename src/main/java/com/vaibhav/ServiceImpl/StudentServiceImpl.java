@@ -85,12 +85,44 @@ public class StudentServiceImpl implements StudentService {
 	}
 	
 	
+	@Override
+	public boolean deleteStudent(String id) throws StudentException {
+		boolean result= false;
+		
+		
+		if(Objects.nonNull(studentRepository.findOne(id))){
+			studentRepository.delete(id);
+			result= true;
+		}else {
+			throw new StudentException("Student id not found");
+		}
+		
+		return result;
+	}
 
-/*	
+	@Override
+	public StudentResponseDTO update(StudentRequestDTO studentDTO, String id) throws StudentException {
+		Student student = studentRepository.findOne(id);
+		if(Objects.nonNull(student)){
+			student.setName(studentDTO.getName());
+			student.setMobile(studentDTO.getMobile());
+			studentRepository.save(student);
+		}else{
+			throw new StudentException("Student id not found");
+		}
+		StudentResponseDTO studentResponseDTO= new StudentResponseDTO();
+		studentResponseDTO.setId(student.getId());
+		studentResponseDTO.setMobile(student.getMobile());
+		studentResponseDTO.setName(student.getName());
+		
+		return studentResponseDTO;
+	}
+
+	/*	
 	Get Unique Id
 	
 	*/
-	private static String getId(){return (new BigInteger(199, new SecureRandom()).toString(36));}
-
+	private static String getId()
+	{return (new BigInteger(199, new SecureRandom()).toString(36));}
 
 }
