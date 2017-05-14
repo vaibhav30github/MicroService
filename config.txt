@@ -1,0 +1,27 @@
+Ubutu Set up
+---------------------------------------------------->
+=======================================
+JDK setup:
+Unzip tar file:
+tar –xvf jdk.tar
+vim .bashrc
+JAVA_HOME=/home/vaibhv/develop/jdk1.8.0
+PATH=$JAVA_HOME/bin:$PATH
+export JAVA_HOME
+export PATH
+source ~/.bashrc
+=======================================
+MYSQL Install
+Sudo apt-get install mysql-server-5.7
+mysql –u –p 
+SHOW GLOBAL VARIABLES LIKE 'PORT';
+
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY ‘root’;
+FLUSH PRIVILEGES;
+Create database XYZ
+======================================
+
+Server Info:
+Find service in port no.
+Sudo lsof –t –i:port no
+
