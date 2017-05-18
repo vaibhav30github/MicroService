@@ -4,7 +4,7 @@ import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.web.servlet.view.document.AbstractXlsView;
 
-import com.vaibhav.entity.Student;
+import com.vaibhav.dto.StudentResponseDTO;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,7 +26,7 @@ public class ExcelView extends AbstractXlsView{
         response.setHeader("Content-Disposition", "attachment; filename=\"my-xls-file.xls\"");
 
         @SuppressWarnings("unchecked")
-        List<Student> students = (List<Student>) model.get("students");
+        List<StudentResponseDTO> students = (List<StudentResponseDTO>) model.get("students");
 
         // create excel xls sheet
         Sheet sheet = workbook.createSheet("User Detail");
@@ -55,7 +55,7 @@ public class ExcelView extends AbstractXlsView{
 
         int rowCount = 1;
 
-        for(Student student : students){
+        for(StudentResponseDTO student : students){
             Row userRow =  sheet.createRow(rowCount++);
             userRow.createCell(0).setCellValue(student.getId());
             userRow.createCell(1).setCellValue(student.getName());

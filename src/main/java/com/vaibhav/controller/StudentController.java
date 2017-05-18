@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +22,7 @@ import com.vaibhav.dto.StudentRequestDTO;
 import com.vaibhav.dto.StudentResponseDTO;
 import com.vaibhav.exception.StudentException;
 import com.vaibhav.service.StudentService;
+import com.vaibhav.view.ExcelView;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -133,9 +135,10 @@ public class StudentController {
 	 * @throws StudentException 
 	 */
 	@RequestMapping(value = "/download", method = RequestMethod.GET)
-	public String download(Model model) throws StudentException {
+	public ExcelView download(Model model) throws StudentException {
+		
 	    model.addAttribute("students", studentService.getAllStudents());
-	    return "";
+	    return new ExcelView();
 	}
 	
 }
