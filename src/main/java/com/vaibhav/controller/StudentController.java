@@ -23,7 +23,6 @@ import com.vaibhav.exception.StudentException;
 import com.vaibhav.service.StudentService;
 
 import io.swagger.annotations.ApiOperation;
-import springfox.documentation.schema.Model;
 
 @RestController
 public class StudentController {
