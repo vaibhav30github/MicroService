@@ -10,7 +10,6 @@ import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @Configuration
 public class SwaggerConfig {
@@ -27,8 +26,8 @@ public class SwaggerConfig {
 	
 	private ApiInfo apiInfo(){
 		return new ApiInfoBuilder()
-				.title("SpringBootProject APIs")
-				.description("APIs for SpringBootProject")
+				.title("Student APIs")
+				.description("APIs for Student")
 				.version("1.0.0")
 				.build();
 	}	

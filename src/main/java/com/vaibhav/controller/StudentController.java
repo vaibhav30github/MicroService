@@ -4,25 +4,26 @@ package com.vaibhav.controller;
 import java.util.List;
 import java.util.Objects;
 
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.google.gson.Gson;
 import com.vaibhav.dto.StudentRequestDTO;
 import com.vaibhav.dto.StudentResponseDTO;
-import com.vaibhav.entity.Student;
 import com.vaibhav.exception.StudentException;
-import com.vaibhav.resopnse.ControllerResponse;
 import com.vaibhav.service.StudentService;
 
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import springfox.documentation.schema.Model;
 
 @RestController
 public class StudentController {
@@ -37,11 +38,11 @@ public class StudentController {
 */
 	@ApiOperation(value="Add Student")
 	@RequestMapping(value="/addStudentDetails",method = RequestMethod.POST,produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> addStudentDetails(@RequestBody StudentRequestDTO studentDTO) {
-		ControllerResponse response = new ControllerResponse();
-
-		try {
-			StudentResponseDTO student = studentService.addStudent(studentDTO);
+	public ResponseEntity<?> addStudentDetails(@RequestBody StudentRequestDTO studentDTO) throws StudentException {
+	
+		StudentResponseDTO student = studentService.addStudent(studentDTO);
+		/*try {
+			
 			response.setStatus(HttpStatus.CREATED);
 			response.setObject(student);
 		} catch (StudentException e) {
@@ -49,8 +50,8 @@ public class StudentController {
 			response.setStatus(HttpStatus.BAD_REQUEST);
 			response.setMessage(e.getMessage());
 		}
-
-		return new ResponseEntity<>(response, HttpStatus.OK);
+*/
+		return new ResponseEntity<>(student, HttpStatus.OK);
 	}
 	
 	/*
@@ -61,15 +62,14 @@ public class StudentController {
 	@RequestMapping(value="/getStudentsDetails",method = RequestMethod.GET,produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> getAllStudentsDetails() throws StudentException {
 
-		ControllerResponse response = new ControllerResponse();
+		
 
 		List<StudentResponseDTO> studentList = studentService.getAllStudents();
 		if(studentList.isEmpty()) {
-			response.setMessage("There is no student in database");
+			throw new StudentException("No record Found");
 		}
-		response.setStatus(HttpStatus.OK);
-		response.setObject(studentList);
-		return new ResponseEntity<>(response, HttpStatus.OK);
+
+		return new ResponseEntity<>(studentList, HttpStatus.OK);
 	}	
 	
 	/*
@@ -77,38 +77,35 @@ public class StudentController {
 	 * 
 	*/
 	@ApiOperation(value="Fetch a Student")
-	@ApiParam("Get a student")
-	@RequestMapping(value="/getStudent{id}",method = RequestMethod.GET,produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> getStudent(@RequestParam String sstudentId) throws StudentException {
+	@RequestMapping(value="/getStudent/{id}",method = RequestMethod.GET,produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> getStudent(@PathVariable String id) throws StudentException {
 
-		ControllerResponse response = new ControllerResponse();
 
-		StudentResponseDTO student = studentService.getStudent(sstudentId);
+		StudentResponseDTO student = studentService.getStudent(id);
 		if(Objects.isNull(student)) {
-			response.setMessage("There is no student in database");
+			throw new StudentException("There is no student in database");
 		}
-		response.setStatus(HttpStatus.OK);
-		response.setObject(student);
-		return new ResponseEntity<>(response, HttpStatus.OK);
+	
+		return new ResponseEntity<>(student, HttpStatus.OK);
 	}		
 /*
 * delete Studet
 */
 	@ApiOperation(value="Delete Student")
-	@RequestMapping(value="/deleteStudent{id}",method = RequestMethod.DELETE,produces=MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> deleteStudent(@RequestParam String sstudentId) throws StudentException {
+	@RequestMapping(value="/deleteStudent/{id}",method = RequestMethod.DELETE,produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> deleteStudent(@PathVariable String id) throws StudentException {
 
-		ControllerResponse response = new ControllerResponse();
 
-		boolean result = studentService.deleteStudent(sstudentId);
+		boolean result = studentService.deleteStudent(id);
 
-		
+		String response=null;
 		if(!result) {
-			response.setMessage("There is no student in database");
+			throw new StudentException("There is no student in database");
+		}else{
+		 response=  "Deleted Sucessfully";
 		}
-		response.setStatus(HttpStatus.OK);
-		response.setObject("Deleted Sucessfully");
-		return new ResponseEntity<>(response, HttpStatus.OK);
+		Gson gson=new Gson();
+		return new ResponseEntity<>(gson.toJson(response), HttpStatus.OK);
 	}
 
 	/*
@@ -116,22 +113,30 @@ public class StudentController {
 	 * 
 	*/
 	@ApiOperation(value="Update Student")
-	@RequestMapping(value="/updateStudent{id}",method = RequestMethod.PUT,produces=MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value="/updateStudent/{id}",method = RequestMethod.PUT,produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> updateStudent(@RequestBody StudentRequestDTO studentDTO,
-			@RequestParam String sstudentId) throws StudentException {
+			@PathVariable String id) throws StudentException {
 
-		ControllerResponse response = new ControllerResponse();
 
-		StudentResponseDTO studentResponseDTO = studentService.update(studentDTO, sstudentId);
+		StudentResponseDTO studentResponseDTO = studentService.update(studentDTO, id);
 
 		
 		if(Objects.nonNull(studentResponseDTO)) {
-			response.setMessage("Student Id not match");
+			throw new StudentException("Student Id not match");
 		}
-		response.setStatus(HttpStatus.OK);
-		response.setObject(studentResponseDTO);
-		return new ResponseEntity<>(response, HttpStatus.OK);
+		
+		return new ResponseEntity<>(studentResponseDTO, HttpStatus.OK);
 	}
-	
+
+
+	/**
+	 * Handle request to download an Excel document
+	 * @throws StudentException 
+	 */
+	@RequestMapping(value = "/download", method = RequestMethod.GET)
+	public String download(Model model) throws StudentException {
+	    model.addAttribute("students", studentService.getAllStudents());
+	    return "";
+	}
 	
 }
