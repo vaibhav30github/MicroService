@@ -9,11 +9,15 @@ import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.vaibhav.dto.AddressRequestDTO;
+import com.vaibhav.dto.AddressResponseDTO;
 import com.vaibhav.dto.StudentRequestDTO;
 import com.vaibhav.dto.StudentResponseDTO;
+import com.vaibhav.entity.Address;
 import com.vaibhav.entity.Student;
 import com.vaibhav.exception.StudentException;
 import com.vaibhav.repository.StudentRepository;
+import com.vaibhav.service.AddressService;
 import com.vaibhav.service.StudentService;
 
 @Service
@@ -41,6 +45,7 @@ public class StudentServiceImpl implements StudentService {
 	@Override
 	public StudentResponseDTO addStudent(StudentRequestDTO studentDTO) throws StudentException {
 		Student student= new Student();
+		Address address = new Address();
 		StudentResponseDTO studentResponseDTO =null;
 		
 		if(Objects.nonNull(studentDTO.getName()))
@@ -53,14 +58,32 @@ public class StudentServiceImpl implements StudentService {
 		else
 			throw new StudentException("Student Mobile no. is empty");
 		
+		if(Objects.nonNull(studentDTO.getAddress()))
+		{
+			address.setCity(studentDTO.getAddress().getCity());
+			address.setPin(studentDTO.getAddress().getPin());
+			student.setAddress(address);
+		} else 
+			throw new StudentException("Student Address is empty");
 		student.setId(getId());
 		
+		//address service
+		//AddressService addressService = new AddressServiceImpl();
+		
+		// persist a student		
 		studentRepository.save(student);
+		//addressService.addAddress(studentDTO.getAddress());
+		
 		studentResponseDTO =new StudentResponseDTO();
 		
 		studentResponseDTO.setId(student.getId());
 		studentResponseDTO.setMobile(student.getMobile());
 		studentResponseDTO.setName(student.getName());
+		AddressResponseDTO addressResponseDTO = new AddressResponseDTO();
+		addressResponseDTO.setAddId(student.getAddress().getAddId());
+		addressResponseDTO.setCity(student.getAddress().getCity());
+		addressResponseDTO.setPin(student.getAddress().getPin());
+		studentResponseDTO.setAddress(addressResponseDTO);
 		return studentResponseDTO;
 	}
 	

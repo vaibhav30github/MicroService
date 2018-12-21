@@ -6,7 +6,18 @@ public class StudentRequestDTO {
 	
 	private String name;
 	
-	private long mobile;
+	private Long mobile;
+	
+	private AddressRequestDTO address;
+
+
+	public AddressRequestDTO getAddress() {
+		return address;
+	}
+
+	public void setAddress(AddressRequestDTO address) {
+		this.address = address;
+	}
 
 	public String getName() {
 		return name;
@@ -16,13 +27,12 @@ public class StudentRequestDTO {
 		this.name = name;
 	}
 
-	public long getMobile() {
+	public Long getMobile() {
 		return mobile;
 	}
 
-	public void setMobile(long mobile) {
+	public void setMobile(Long mobile) {
 		this.mobile = mobile;
 	}
-	
 	
 }

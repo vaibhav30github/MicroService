@@ -7,9 +7,17 @@ public class StudentResponseDTO {
 	
 	private String name;
 	
-	private long mobile;
+	private Long mobile;
+	
+	private AddressResponseDTO address;
 
+	public AddressResponseDTO getAddress() {
+		return address;
+	}
 
+	public void setAddress(AddressResponseDTO address) {
+		this.address = address;
+	}
 
 	public String getId() {
 		return id;
@@ -27,13 +35,12 @@ public class StudentResponseDTO {
 		this.name = name;
 	}
 
-	public long getMobile() {
+	public Long getMobile() {
 		return mobile;
 	}
 
-	public void setMobile(long mobile) {
+	public void setMobile(Long mobile) {
 		this.mobile = mobile;
 	}
-	
 	
 }
